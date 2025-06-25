@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom burgundy color */
+.bg-burgundy {
+  --tw-bg-opacity: 1;
+  background-color: rgba(102, 16, 38, var(--tw-bg-opacity));
+}
+.text-burgundy {
+  --tw-text-opacity: 1;
+  color: rgba(102, 16, 38, var(--tw-text-opacity));
+}
+
+/* Fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-background text-gray-900 font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary/90;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-white hover:bg-accent/90;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .input-style {
+    @apply block w-full px-4 py-2 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 transition-shadow duration-200;
+  }
+} 

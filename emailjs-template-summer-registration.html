@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer at WIC Registration Confirmation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .section h2 {
+            margin: 0 0 15px 0;
+            color: #1e40af;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .child-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .child-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e40af;
+        }
+        .child-info {
+            margin-bottom: 15px;
+        }
+        .child-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .programme-item {
+            background: #f1f5f9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .programme-name {
+            font-weight: 600;
+            color: #1e40af;
+        }
+        .dates {
+            color: #059669;
+            font-weight: 500;
+        }
+        .options {
+            color: #7c3aed;
+            font-size: 13px;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .pricing-table th,
+        .pricing-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .pricing-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #374151;
+        }
+        .total-row {
+            background-color: #f0f9ff;
+            font-weight: 600;
+            color: #1e40af;
+        }
+        .discount-row {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .reminder-box {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .reminder-box h3 {
+            margin: 0 0 10px 0;
+            color: #92400e;
+            font-size: 16px;
+        }
+        .reminder-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Summer at WIC Registration Confirmation</h1>
+            <p>Thank you for registering your child(ren) for our summer programmes!</p>
+        </div>
+
+        <div class="content">
+            <!-- Parent/Guardian Information -->
+            <div class="section">
+                <h2>👨‍👩‍👧‍👦 Parent/Guardian Details</h2>
+                <p><strong>Name:</strong> {{parent_name}}</p>
+                <p><strong>Email:</strong> {{parent_email}}</p>
+                <p><strong>Phone:</strong> {{parent_phone}}</p>
+                <p><strong>Payment Method:</strong> {{payment_method}}</p>
+            </div>
+
+            <!-- Children Information -->
+            <div class="section">
+                <h2>🙇 Children & Programmes</h2>
+                {{children_block}}
+            </div>
+
+            <!-- Additional Options -->
+            <div class="section">
+                <h2>⚙️ Additional Options</h2>
+                <p><strong>Early Start (8:30am):</strong> {{early_start}}</p>
+                <p><strong>Late Finish (4:30pm):</strong> {{late_finish}}</p>
+                <p><strong>Lunch Provided:</strong> {{lunch_provided}}</p>
+                <p><strong>Transport Required:</strong> {{transport_required}}</p>
+            </div>
+
+            <!-- Pricing Breakdown -->
+            <div class="section">
+                <h2>💰 Pricing Breakdown</h2>
+                <table class="pricing-table">
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td>Subtotal</td>
+                        <td>£{{subtotal}}</td>
+                    </tr>
+                    {{#if has_full_week_discount}}
+                    <tr class="discount-row">
+                        <td>Full Week Discount (10%)</td>
+                        <td>-£{{full_week_discount}}</td>
+                    </tr>
+                    {{/if}}
+                    {{#if has_sibling_discount}}
+                    <tr class="discount-row">
+                        <td>Sibling Discount (5%)</td>
+                        <td>-£{{sibling_discount}}</td>
+                    </tr>
+                    {{/if}}
+                    {{#if has_coupon_discount}}
+                    <tr class="discount-row">
+                        <td>Coupon Discount (10%)</td>
+                        <td>-£{{coupon_discount}}</td>
+                    </tr>
+                    {{/if}}
+                    <tr class="total-row">
+                        <td><strong>Total Amount</strong></td>
+                        <td><strong>£{{total_amount}}</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Terms Agreement -->
+            <div class="section">
+                <h2>✅ Terms & Conditions</h2>
+                <p><strong>Terms Accepted:</strong> {{terms_accepted}}</p>
+                <p><strong>Date:</strong> {{registration_date}}</p>
+            </div>
+
+            <!-- Important Reminders -->
+            <div class="reminder-box">
+                <h3>📋 Important Reminders</h3>
+                <p>Please ensure your child brings water, suitable clothing, and arrives 10 minutes early. Full-day students must bring lunch.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Watford Islamic Centre</strong></p>
+            <p>Thank you for choosing our summer programmes!</p>
+            <p>For any questions, please contact us at info@watfordislamiccentre.org</p>
+        </div>
+    </div>
+</body>
+</html> 
