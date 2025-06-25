@@ -9,10 +9,18 @@ import hero3 from '../../assets/images/hero 3.jpeg';
 import summerCampImg from '../../assets/images/Summer Camp (4–11 years).png';
 import quranIntensiveImg from '../../assets/images/Quran Intensive (8–16 years).png';
 import superSaturdayImg from '../../assets/images/Super Saturday (4–16 years).png';
+import sgalary2 from '../../assets/images/sgalary2.mp4';
+import sgalary3 from '../../assets/images/sgalary3.mp4';
 import sgalary4 from '../../assets/images/sgalary4.mp4';
 import testimonial1 from '../../assets/images/TEST1.jpeg';
 import testimonial2 from '../../assets/images/TEST2.jpeg';
 import testimonial3 from '../../assets/images/TEST3.jpeg';
+import kidsTimetable from '../../assets/images/kids Timetable.png';
+import juniorsTimetable from '../../assets/images/JUniors timetable (1).png';
+import teensTimetable from '../../assets/images/TEENS Timetable.png';
+import newPoster from '../../assets/images/NEWPOSTER.jpeg';
+import quranIntensiveImgNew from '../../assets/images/Quran Intensive (8–16 years) NEW PICTURE.png';
+import superSaturdayImgNew from '../../assets/images/Super Saturday (4–16 years) NEW PICTURE.png';
 
 export default function SummerHome() {
   const [current, setCurrent] = useState(0);
@@ -310,7 +318,7 @@ export default function SummerHome() {
       id: 'quran',
       title: 'Quran Intensive (8–16 years)',
       subtitle: 'BOYS & GIRLS',
-      image: quranIntensiveImg,
+      image: quranIntensiveImgNew,
       bulletPoints: [
         'Hifdh and how to memorise like a pro',
         'Revision and consolidation of past surahs',
@@ -345,7 +353,7 @@ export default function SummerHome() {
       id: 'super-saturday',
       title: 'Super Saturday (4–16 years)',
       subtitle: 'BOYS & GIRLS',
-      image: superSaturdayImg,
+      image: superSaturdayImgNew,
       bulletPoints: [
         'Stories of the Prophets',
         'Responsibilities of adulthood',
@@ -396,7 +404,7 @@ export default function SummerHome() {
 
       {/* Poster Section - Made Larger */}
       <section className="w-full bg-white py-12 flex justify-center">
-        <img src={summerPoster} alt="Summer at WIC Poster" className="max-w-4xl w-full rounded-lg shadow-lg" />
+        <img src={newPoster} alt="Summer at WIC Poster" className="max-w-4xl w-full rounded-lg shadow-lg" />
       </section>
 
       {/* Programme Cards Section - Horizontal Layout */}
@@ -440,12 +448,12 @@ export default function SummerHome() {
                       <Link to="/summer/programmes" className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors">
                         Find Out More
                       </Link>
-                      <button
-                        onClick={() => handlePriceBreakdown(programme)}
-                        className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
+                      <Link
+                        to="/summer/register"
+                        className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
                       >
-                        Price Breakdown
-                      </button>
+                        Sign Up Now
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -459,10 +467,8 @@ export default function SummerHome() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-primary">What's On For Your Age?</h2>
-          
-          {/* Age Group Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {Object.keys(ageGroupTimetables).map((ageGroup) => (
+            {['kids', 'juniors', 'teens'].map((ageGroup) => (
               <button
                 key={ageGroup}
                 onClick={() => setActiveAgeGroup(ageGroup)}
@@ -472,41 +478,20 @@ export default function SummerHome() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {ageGroupTimetables[ageGroup].title}
+                {ageGroup === 'kids' ? 'Kids (4–7)' : ageGroup === 'juniors' ? 'Juniors (8–11)' : 'Teens (12–16)'}
               </button>
             ))}
           </div>
-
-          {/* Active Age Group Content */}
-          <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-primary mb-2">
-                {ageGroupTimetables[activeAgeGroup].title}
-              </h3>
-              <p className="text-gray-600 text-lg">
-                {ageGroupTimetables[activeAgeGroup].description}
-              </p>
-            </div>
-
-            {/* Available Programmes */}
-            <div className="mb-8">
-              <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">Available Programmes:</h4>
-              <div className="flex flex-wrap justify-center gap-3">
-                {ageGroupTimetables[activeAgeGroup].programmes.map((programme, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium"
-                  >
-                    {programme}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Timetable Display */}
-            <div className="flex justify-center">
-              <AgeGroupTimetableDisplay ageGroup={activeAgeGroup} />
-            </div>
+          <div className="bg-gray-50 rounded-2xl p-8 shadow-lg flex flex-col items-center">
+            {activeAgeGroup === 'kids' && (
+              <img src={kidsTimetable} alt="Kids Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
+            {activeAgeGroup === 'juniors' && (
+              <img src={juniorsTimetable} alt="Juniors Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
+            {activeAgeGroup === 'teens' && (
+              <img src={teensTimetable} alt="Teens Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
           </div>
         </div>
       </section>
@@ -556,11 +541,25 @@ export default function SummerHome() {
       <section className="py-16 bg-yellow-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-primary">Gallery from Summer '24</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <video className="w-full rounded-lg shadow-md" controls autoPlay loop muted>
-              <source src={sgalary4} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+          <div className="flex flex-col md:flex-row gap-6">
+            {[{src: sgalary2, label: 'sgalary2.mp4'}, {src: sgalary3, label: 'sgalary3.mp4'}, {src: sgalary4, label: 'sgalary4.mp4'}].map((video, idx) => (
+              video.src ? (
+                <video
+                  key={video.label}
+                  src={video.src}
+                  controls
+                  autoPlay={false}
+                  style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}
+                  className="rounded-lg shadow-md"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <div key={video.label} className="w-full h-64 flex items-center justify-center bg-gray-200 rounded-lg shadow-md text-gray-500 text-lg">
+                  Video not available.
+                </div>
+              )
+            ))}
           </div>
         </div>
       </section>

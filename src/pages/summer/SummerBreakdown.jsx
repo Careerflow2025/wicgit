@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import summerCampImg from '../../assets/images/Summer Camp (4–11 years).png';
 import quranIntensiveImg from '../../assets/images/Quran Intensive (8–16 years).png';
 import superSaturdayImg from '../../assets/images/Super Saturday (4–16 years).png';
+import kidsTimetable from '../../assets/images/kids Timetable.png';
+import juniorsTimetable from '../../assets/images/JUniors timetable (1).png';
+import teensTimetable from '../../assets/images/TEENS Timetable.png';
 
 export default function SummerBreakdown() {
   const [activeAgeGroup, setActiveAgeGroup] = useState('kids');
@@ -437,10 +440,8 @@ export default function SummerBreakdown() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-primary">What's On For Your Age?</h2>
-          
-          {/* Age Group Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {Object.keys(ageGroupTimetables).map((ageGroup) => (
+            {['kids', 'juniors', 'teens'].map((ageGroup) => (
               <button
                 key={ageGroup}
                 onClick={() => setActiveAgeGroup(ageGroup)}
@@ -450,41 +451,20 @@ export default function SummerBreakdown() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {ageGroupTimetables[ageGroup].title}
+                {ageGroup === 'kids' ? 'Kids (4–7)' : ageGroup === 'juniors' ? 'Juniors (8–11)' : 'Teens (12–16)'}
               </button>
             ))}
           </div>
-
-          {/* Active Age Group Content */}
-          <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-primary mb-2">
-                {ageGroupTimetables[activeAgeGroup].title}
-              </h3>
-              <p className="text-gray-600 text-lg">
-                {ageGroupTimetables[activeAgeGroup].description}
-              </p>
-            </div>
-
-            {/* Available Programmes */}
-            <div className="mb-8">
-              <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">Available Programmes:</h4>
-              <div className="flex flex-wrap justify-center gap-3">
-                {ageGroupTimetables[activeAgeGroup].programmes.map((programme, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium"
-                  >
-                    {programme}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Timetable Display */}
-            <div className="flex justify-center">
-              <AgeGroupTimetableDisplay ageGroup={activeAgeGroup} />
-            </div>
+          <div className="bg-gray-50 rounded-2xl p-8 shadow-lg flex flex-col items-center">
+            {activeAgeGroup === 'kids' && (
+              <img src={kidsTimetable} alt="Kids Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
+            {activeAgeGroup === 'juniors' && (
+              <img src={juniorsTimetable} alt="Juniors Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
+            {activeAgeGroup === 'teens' && (
+              <img src={teensTimetable} alt="Teens Timetable" className="w-full max-w-3xl rounded-lg shadow-md object-contain" style={{height: 'auto'}} />
+            )}
           </div>
         </div>
       </section>

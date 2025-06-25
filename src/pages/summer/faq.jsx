@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const faqData = [
   {
     question: "What are the dates for the Summer School 2025?",
-    answer: "The program runs from 24th July to 30th August, Monday to Saturday."
+    answer: "The program runs from 23rd July to 30th August, Monday to Saturday."
   },
   {
     question: "Where are the programs taking place?",

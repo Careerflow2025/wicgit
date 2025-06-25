@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 
 export default function ThankYou() {
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [details, setDetails] = useState(null);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
     // Check for Stripe session data
@@ -19,6 +22,36 @@ export default function ThankYou() {
     setDetails(stripeSession);
     localStorage.removeItem('stripeSession');
   }, []);
+
+  useEffect(() => {
+    // Only send email if payment is successful and email hasn't been sent yet
+    if (status === 'success' && details && !emailSent) {
+      // Initialize EmailJS
+      if (window && emailjs && process.env.VITE_EMAILJS_PUBLIC_KEY) {
+        emailjs.init(process.env.VITE_EMAILJS_PUBLIC_KEY);
+      }
+      // Prepare template params
+      const templateParams = {
+        client_name: details.user?.parentName || '',
+        client_email: details.user?.parentEmail || '',
+        admin_email: 'info@watfordislamiccentre.com',
+        amount_paid: details.amount,
+        payment_id: details.paymentId || '',
+        payment_date: new Date().toLocaleString('en-GB'),
+        programme_info: details.children ? details.children.map(c => c.programmes?.map(p => p.name).join(', ')).join('; ') : '',
+      };
+      // Send to both client and admin
+      emailjs.send(
+        process.env.VITE_EMAILJS_SERVICE_ID,
+        'template_svb82lr',
+        templateParams
+      ).then(() => {
+        setEmailSent(true);
+      }).catch((err) => {
+        setEmailError('Confirmation email failed to send.');
+      });
+    }
+  }, [status, details, emailSent]);
 
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Processing your payment...</div>;
@@ -41,6 +74,12 @@ export default function ThankYou() {
                 <p className="text-sm text-gray-600">Amount paid: £{details.amount}</p>
                 <p className="text-sm text-gray-600">Payment method: {details.paymentOption === 'weekly' ? 'Weekly (3 payments)' : 'Full payment'}</p>
               </div>
+            )}
+            {emailSent && (
+              <div className="mt-4 text-green-700 font-semibold">Payment successful, confirmation sent!</div>
+            )}
+            {emailError && (
+              <div className="mt-4 text-red-600 font-semibold">{emailError}</div>
             )}
             <div className="mt-4">
               <a href="/" className="text-green-700 underline">Return to homepage</a>

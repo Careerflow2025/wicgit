@@ -22,7 +22,7 @@ const programmeOptions = [
   'Summer Camp – Full Day (9am–4pm)',
   'Super Saturday (10am–1pm)',
 ];
-const minDate = new Date(2025, 6, 24); // 24 July 2025
+const minDate = new Date(2025, 6, 23); // 23 July 2025
 const maxDate = new Date(2025, 7, 30); // 30 August 2025
 
 const isSunday = (date) => date.getDay() === 0;
@@ -308,13 +308,13 @@ const canSelectLateFinish = (child) => {
 // Helper function to check if a date is valid for a specific programme
 const isValidDateForProgramme = (date, programmeName) => {
   const day = date.getDay();
-  const start = new Date(2025, 6, 24); // 24 July 2025
-  const end = new Date(2025, 7, 30);   // 30 August 2025
+  const baseName = getBaseProgrammeName(programmeName);
+  // Use 23 July for non-Saturday, 24 July for Super Saturday
+  const start = baseName === 'Super Saturday' ? new Date(2025, 6, 24) : new Date(2025, 6, 23);
+  const end = new Date(2025, 7, 30);
 
   // Check if date is within allowed range and not Sunday
   if (date < start || date > end || day === 0) return false;
-
-  const baseName = getBaseProgrammeName(programmeName);
 
   // Quran Intensive and Summer Camp: only weekdays (Monday-Friday)
   if (baseName === 'Quran Intensive' || baseName.startsWith('Summer Camp')) {
@@ -332,18 +332,20 @@ const isValidDateForProgramme = (date, programmeName) => {
 // Helper function to get excluded dates for a specific programme
 const getExcludedDatesForProgramme = (programmeName) => {
   const excludedDates = [];
-  const start = new Date(2025, 6, 24); // 24 July 2025
-  const end = new Date(2025, 7, 30);   // 30 August 2025
-  
+  const baseName = getBaseProgrammeName(programmeName);
+  // Use 23 July for non-Saturday, 24 July for Super Saturday
+  const start = baseName === 'Super Saturday' ? new Date(2025, 6, 24) : new Date(2025, 6, 23);
+  const end = new Date(2025, 7, 30);
+
   let currentDate = new Date(start);
-  
+
   while (currentDate <= end) {
     if (!isValidDateForProgramme(currentDate, programmeName)) {
       excludedDates.push(new Date(currentDate));
     }
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  
+
   return excludedDates;
 };
 
@@ -866,7 +868,17 @@ export default function SummerRegister() {
                                 </div>
                               )}
                               <div className="text-xs text-gray-500 mt-2 mb-2 w-full text-center">
-                                <div>Available dates: 24th July to 30th August 2025 (excluding Sundays)</div>
+                                <div>
+                                  {(() => {
+                                    const baseName = getBaseProgrammeName(p.name);
+                                    if (baseName === 'Quran Intensive' || baseName.startsWith('Summer Camp')) {
+                                      return 'Available dates: 23rd July to 30th August 2025 (excluding Sundays)';
+                                    } else if (baseName === 'Super Saturday') {
+                                      return 'Available dates: 24th July to 30th August 2025 (Saturdays only)';
+                                    }
+                                    return null;
+                                  })()}
+                                </div>
                                 <div className="mt-1">
                                   {(() => {
                                     const baseName = getBaseProgrammeName(p.name);
