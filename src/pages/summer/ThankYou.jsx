@@ -10,6 +10,14 @@ export default function ThankYou() {
   const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
+    // Initialize EmailJS once when component mounts
+    if (window && emailjs) {
+      emailjs.init('TmR4Bj4RfWfUyottq'); // Use the same public key as Enrol.jsx
+      console.log('EmailJS initialized');
+    }
+  }, []);
+
+  useEffect(() => {
     // Check for Stripe session data
     const stripeSession = JSON.parse(localStorage.getItem('stripeSession') || '{}');
     if (!stripeSession.user || !stripeSession.amount) {
@@ -26,30 +34,42 @@ export default function ThankYou() {
   useEffect(() => {
     // Only send email if payment is successful and email hasn't been sent yet
     if (status === 'success' && details && !emailSent) {
-      // Initialize EmailJS
-      if (window && emailjs && process.env.VITE_EMAILJS_PUBLIC_KEY) {
-        emailjs.init(process.env.VITE_EMAILJS_PUBLIC_KEY);
-      }
-      // Prepare template params
-      const templateParams = {
-        client_name: details.user?.parentName || '',
-        client_email: details.user?.parentEmail || '',
-        admin_email: 'info@watfordislamiccentre.com',
-        amount_paid: details.amount,
-        payment_id: details.paymentId || '',
-        payment_date: new Date().toLocaleString('en-GB'),
-        programme_info: details.children ? details.children.map(c => c.programmes?.map(p => p.name).join(', ')).join('; ') : '',
+      const sendConfirmationEmail = async () => {
+        try {
+          // Prepare template params for payment confirmation
+          const templateParams = {
+            to_name: details.user?.parentName || 'Customer',
+            to_email: details.user?.parentEmail || '',
+            admin_email: 'info@watfordislamiccentre.com',
+            amount_paid: `£${details.amount}`,
+            payment_id: details.paymentId || 'N/A',
+            payment_date: new Date().toLocaleString('en-GB'),
+            programme_info: details.children ? 
+              details.children.map(c => 
+                c.programmes?.map(p => p.name).join(', ')
+              ).join('; ') : 'N/A',
+            client_name: details.user?.parentName || 'Customer',
+            client_email: details.user?.parentEmail || '',
+          };
+
+          console.log('Sending payment confirmation email with params:', templateParams);
+
+          // Use the same service ID as Enrol.jsx but with the payment confirmation template
+          const result = await emailjs.send(
+            'service_pghoqyc',  // Same service ID as Enrol.jsx
+            'template_svb82lr', // Payment confirmation template ID
+            templateParams
+          );
+          
+          console.log('Payment confirmation email sent successfully:', result);
+          setEmailSent(true);
+        } catch (error) {
+          console.error('Failed to send payment confirmation email:', error);
+          setEmailError(`Failed to send confirmation email: ${error.message}`);
+        }
       };
-      // Send to both client and admin
-      emailjs.send(
-        process.env.VITE_EMAILJS_SERVICE_ID,
-        'template_svb82lr',
-        templateParams
-      ).then(() => {
-        setEmailSent(true);
-      }).catch((err) => {
-        setEmailError('Confirmation email failed to send.');
-      });
+
+      sendConfirmationEmail();
     }
   }, [status, details, emailSent]);
 
