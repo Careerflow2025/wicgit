@@ -34,42 +34,57 @@ export default function ThankYou() {
   useEffect(() => {
     // Only send email if payment is successful and email hasn't been sent yet
     if (status === 'success' && details && !emailSent) {
-      const sendConfirmationEmail = async () => {
+      const sendBothEmails = async () => {
         try {
-          // Prepare template params for payment confirmation
+          // Format amount (if in pennies, convert to pounds)
+          let amount = details.amount;
+          if (typeof amount === 'number' && amount > 1000) {
+            amount = (amount / 100).toFixed(2);
+          }
+          if (typeof amount === 'string') {
+            amount = amount.replace(/[^0-9.]/g, '');
+          }
+          if (!amount || isNaN(amount)) {
+            amount = 'N/A';
+          }
+
+          // Template params
           const templateParams = {
             to_name: details.user?.parentName || 'Customer',
             to_email: details.user?.parentEmail || '',
             admin_email: 'info@watfordislamiccentre.com',
-            amount_paid: `£${details.amount}`,
+            amount_paid: `£${amount}`,
             payment_id: details.paymentId || 'N/A',
             payment_date: new Date().toLocaleString('en-GB'),
-            programme_info: details.children ? 
-              details.children.map(c => 
+            programme_info: details.children ?
+              details.children.map(c =>
                 c.programmes?.map(p => p.name).join(', ')
               ).join('; ') : 'N/A',
             client_name: details.user?.parentName || 'Customer',
             client_email: details.user?.parentEmail || '',
           };
 
-          console.log('Sending payment confirmation email with params:', templateParams);
-
-          // Use the same service ID as Enrol.jsx but with the payment confirmation template
-          const result = await emailjs.send(
-            'service_pghoqyc',  // Same service ID as Enrol.jsx
-            'template_svb82lr', // Payment confirmation template ID
-            templateParams
+          // Send to client
+          await emailjs.send(
+            'service_pghoqyc',
+            'template_svb82lr',
+            { ...templateParams, to_email: details.user?.parentEmail || '' }
           );
-          
-          console.log('Payment confirmation email sent successfully:', result);
+          // Send to admin
+          await emailjs.send(
+            'service_pghoqyc',
+            'template_svb82lr',
+            { ...templateParams, to_email: 'info@watfordislamiccentre.com' }
+          );
+
           setEmailSent(true);
         } catch (error) {
           console.error('Failed to send payment confirmation email:', error);
-          setEmailError(`Failed to send confirmation email: ${error.message}`);
+          setEmailError('Failed to send confirmation email: ' + error.message);
         }
       };
 
-      sendConfirmationEmail();
+      sendBothEmails();
     }
   }, [status, details, emailSent]);
 
@@ -91,7 +106,7 @@ export default function ThankYou() {
             <p className="text-md text-gray-600 mb-4">A confirmation email will be sent to you soon.</p>
             {details && (
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Amount paid: £{details.amount}</p>
+                <p className="text-sm text-gray-600">Amount paid: £{typeof details.amount === 'number' && details.amount > 1000 ? (details.amount / 100).toFixed(2) : details.amount}</p>
                 <p className="text-sm text-gray-600">Payment method: {details.paymentOption === 'weekly' ? 'Weekly (3 payments)' : 'Full payment'}</p>
               </div>
             )}
