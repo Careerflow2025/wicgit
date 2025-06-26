@@ -48,27 +48,35 @@ export default function ThankYou() {
             amount = 'N/A';
           }
 
-          // Template params
+          // Fallbacks for all fields
+          const clientName = details.user?.parentName || 'Customer';
+          const clientEmail = details.user?.parentEmail || 'no-reply@watfordislamiccentre.com';
+          const paymentId = details.paymentId || 'N/A';
+          const paymentDate = new Date().toLocaleString('en-GB');
+          const programmeInfo = details.children ?
+            details.children.map(c =>
+              c.programmes?.map(p => p.name).join(', ')
+            ).join('; ') : 'N/A';
+          const fromName = clientName;
+          const replyTo = clientEmail;
+
+          // Template params (always filled)
           const templateParams = {
-            to_name: details.user?.parentName || 'Customer',
-            to_email: details.user?.parentEmail || '',
-            admin_email: 'info@watfordislamiccentre.com',
+            to_email: '', // will be set per email
+            client_name: clientName,
             amount_paid: `£${amount}`,
-            payment_id: details.paymentId || 'N/A',
-            payment_date: new Date().toLocaleString('en-GB'),
-            programme_info: details.children ?
-              details.children.map(c =>
-                c.programmes?.map(p => p.name).join(', ')
-              ).join('; ') : 'N/A',
-            client_name: details.user?.parentName || 'Customer',
-            client_email: details.user?.parentEmail || '',
+            payment_id: paymentId,
+            payment_date: paymentDate,
+            programme_info: programmeInfo,
+            name: fromName,
+            email: replyTo,
           };
 
           // Send to client
           await emailjs.send(
             'service_pghoqyc',
             'template_svb82lr',
-            { ...templateParams, to_email: details.user?.parentEmail || '' }
+            { ...templateParams, to_email: clientEmail }
           );
           // Send to admin
           await emailjs.send(
