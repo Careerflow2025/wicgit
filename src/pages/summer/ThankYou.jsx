@@ -60,6 +60,9 @@ export default function ThankYou() {
           const fromName = clientName;
           const replyTo = clientEmail;
 
+          // Use separate env variable for payment confirmation template
+          const PAYMENT_TEMPLATE_ID = import.meta.env.PUBLIC_EMAILJS_PAYMENT_TEMPLATE_ID || 'template_svb82lr';
+
           // Template params (always filled)
           const templateParams = {
             to_email: '', // will be set per email
@@ -75,13 +78,13 @@ export default function ThankYou() {
           // Send to client
           await emailjs.send(
             'service_pghoqyc',
-            'template_svb82lr',
+            PAYMENT_TEMPLATE_ID,
             { ...templateParams, to_email: clientEmail }
           );
           // Send to admin
           await emailjs.send(
             'service_pghoqyc',
-            'template_svb82lr',
+            PAYMENT_TEMPLATE_ID,
             { ...templateParams, to_email: 'info@watfordislamiccentre.com' }
           );
 
