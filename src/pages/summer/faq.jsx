@@ -51,7 +51,7 @@ const faqData = [
   },
   {
     question: "What happens after I submit the registration form?",
-    answer: "You will receive an email with:\n* A summary of your selections\n* The total cost (with any discounts applied)\n* Payment instructions\nYou will then be redirected to the payment gateway.\nOnce payment has been confirmed, you will receive a follow-up email with:\n* A medical information form to complete for your children\n* A link to join our Summer at WIC Parents WhatsApp group"
+    answer: "You will then be redirected to the payment gateway.\nOnce payment has been confirmed, you will receive a follow-up email with:\n* A medical information form to complete for your children\n* A link to join our Summer at WIC Parents WhatsApp group"
   },
   {
     question: "How will I know my child's place is confirmed?",

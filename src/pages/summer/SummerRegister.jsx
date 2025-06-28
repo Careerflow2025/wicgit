@@ -560,6 +560,7 @@ export default function SummerRegister() {
       // 1. Prepare EmailJS template parameters
       const { subtotal, siblingDiscount, fullWeekDiscount, couponDiscount, grandTotal } = getAllPricing(children, coupon);
       
+      // 2. Send the registration data via EmailJS to both customer and admin
       const templateParams = {
         parent_name: parent.name,
         parent_email: parent.email,
@@ -581,16 +582,92 @@ export default function SummerRegister() {
         terms_accepted: agree ? 'Yes' : 'No',
         registration_date: new Date().toLocaleDateString('en-GB'),
       };
-      
-      // 2. Send the registration data via EmailJS
+
+      // Send to customer (parent)
       await emailjs.send(
         'service_pghoqyc',
         'template_w5jzemh',
-        templateParams,
+        { ...templateParams, to_email: parent.email },
         'TmR4Bj4RfWfUyottq'
       );
 
-      // 3. Prepare Stripe payment data
+      // Send to admin
+      await emailjs.send(
+        'service_pghoqyc',
+        'template_w5jzemh',
+        { ...templateParams, to_email: 'info@watfordislamiccentre.com' },
+        'TmR4Bj4RfWfUyottq'
+      );
+
+      // 3. Save registration data to Google Sheets via SheetDB
+      const sheetData = {
+        timestamp: new Date().toISOString(),
+        parent_name: parent.name,
+        parent_email: parent.email,
+        parent_phone: parent.phone,
+        payment_method: payment,
+        number_of_children: children.length,
+        children_details: children.map((child, index) => {
+          const childProgrammes = child.programmes.map(prog => {
+            const dates = prog.dates ? prog.dates.map(date => 
+              date.toLocaleDateString('en-GB', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short',
+                year: 'numeric'
+              })
+            ).join(', ') : 'No dates selected';
+            
+            return `${prog.name}: ${dates}${prog.earlyStart ? ' (Early Start)' : ''}${prog.lateFinish ? ' (Late Finish)' : ''}`;
+          }).join('; ');
+          
+          return `Child ${index + 1}: ${child.name} (Age ${child.age}) - ${childProgrammes}`;
+        }).join(' | '),
+        early_start: children.some(c => c.programmes.some(p => p.earlyStart)) ? 'Yes' : 'No',
+        late_finish: children.some(c => c.programmes.some(p => p.lateFinish)) ? 'Yes' : 'No',
+        subtotal: subtotal.toFixed(2),
+        full_week_discount: fullWeekDiscount.toFixed(2),
+        sibling_discount: siblingDiscount.toFixed(2),
+        coupon_discount: couponDiscount.toFixed(2),
+        total_amount: grandTotal.toFixed(2),
+        coupon_used: coupon || 'None',
+        terms_accepted: agree ? 'Yes' : 'No',
+        registration_date: new Date().toLocaleDateString('en-GB'),
+        status: 'Pending Payment'
+      };
+
+      console.log('[SheetDB] Attempting to save registration data:', sheetData);
+
+      try {
+        const sheetResponse = await fetch('https://sheetdb.io/api/v1/o8j1znpuyrz5s', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(sheetData)
+        });
+
+        console.log('[SheetDB] Response status:', sheetResponse.status);
+        console.log('[SheetDB] Response headers:', Object.fromEntries(sheetResponse.headers.entries()));
+
+        if (sheetResponse.ok) {
+          const responseData = await sheetResponse.text();
+          console.log('[SheetDB] Registration data saved to spreadsheet successfully');
+          console.log('[SheetDB] Response data:', responseData);
+          toast.success('Registration saved to database successfully!');
+        } else {
+          const errorText = await sheetResponse.text();
+          console.error('[SheetDB] Failed to save to spreadsheet:', sheetResponse.status, errorText);
+          toast.error(`Failed to save to database (${sheetResponse.status}). Check console for details.`);
+          // Don't throw error here - continue with payment process
+        }
+      } catch (sheetError) {
+        console.error('[SheetDB] Network error saving to spreadsheet:', sheetError);
+        toast.error('Network error saving to database. Check console for details.');
+        // Don't throw error here - continue with payment process
+      }
+
+      // 4. Prepare Stripe payment data
       const paymentOption = payment; // 'upfront' or 'weekly'
       const amount = grandTotal;
 
@@ -637,7 +714,7 @@ export default function SummerRegister() {
       const session = await response.json();
       console.log('[Stripe] Session created successfully:', session);
       
-      // 2. Redirect to the Stripe Checkout URL provided by the server
+      // 5. Redirect to the Stripe Checkout URL provided by the server
       if (session.url) {
         window.location.href = session.url;
       } else {
@@ -1036,83 +1113,47 @@ export default function SummerRegister() {
                         <div className="font-bold text-xl mb-4 text-primary border-b pb-2">
                           {c.name} (Age {c.age})
                         </div>
-                        
-                        {pricing[i].breakdown.length === 0 ? (
+                        {c.programmes.length === 0 ? (
                           <div className="text-gray-500 italic">No programmes selected</div>
                         ) : (
                           <div className="space-y-3">
-                            {pricing[i].breakdown.map((p, j) => (
-                              <div key={j} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            {c.programmes.map((prog, j) => (
+                              <div key={j} className="flex flex-col md:flex-row md:items-center md:justify-between p-3 bg-gray-50 rounded-lg mb-2">
                                 <div className="flex-1">
-                                  <div className="font-semibold text-primary">✅ {p.name}</div>
+                                  <div className="font-semibold text-primary">✅ {prog.name}</div>
                                   <div className="text-sm text-gray-600">
-                                    {p.name === 'Super Saturday' ? (
-                                      `${p.days} sessions (10am–1pm)`
-                                    ) : p.name === 'Quran Intensive' ? (
-                                      `${p.days} days (9am–12pm)`
-                                    ) : p.name === 'Summer Camp' ? (
-                                      `${p.days} days (9am–4pm)`
-                                    ) : (
-                                      `${p.days} days`
-                                    )}
-                                  </div>
-                                  
-                                  {/* Show discount information */}
-                                  {p.discount > 0 && (
-                                    <div className="text-xs text-green-700 mt-1 font-medium">
-                                      {p.name === 'Super Saturday' && p.days === 6 ? (
-                                        '🎉 10% off - All 6 sessions booked!'
-                                      ) : p.name === 'Quran Intensive' && p.weekdays >= 5 ? (
-                                        '🎉 10% off - Full week (5 weekdays) booked!'
-                                      ) : p.name === 'Summer Camp' && p.weekdays >= 5 ? (
-                                        '🎉 10% off - Full week (5 weekdays) booked!'
-                                      ) : (
-                                        'Discount applied'
-                                      )}
-                                    </div>
-                                  )}
-                                  
-                                  {p.details && p.details.length > 0 && (
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      <div className="font-medium">Selected Dates:</div>
-                                      <div className="flex flex-wrap gap-1 mt-1">
-                                        {p.details.map((d, idx) => (
-                                          <span key={idx} className={`inline-block px-2 py-1 rounded text-xs ${
-                                            d.isWeekday ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'
-                                          }`}>
-                                            {new Date(d.date).toLocaleDateString('en-GB', { 
-                                              weekday: 'short', 
-                                              day: 'numeric', 
-                                              month: 'short' 
-                                            })}
-                                            {d.full ? ' (Full Day)' : ''}
-                                            {d.early ? ' +Early' : ''}
-                                            {d.late ? ' +Late' : ''}
-                                            {d.isWeekday ? ' (Weekday)' : ''}
-                                          </span>
-                                        ))}
+                                    {prog.dates && prog.dates.length > 0 ? (
+                                      <div className="flex flex-wrap gap-2 mt-1">
+                                        {prog.dates.map((dateObj, idx) => {
+                                          // Determine time string based on programme name
+                                          let timeStr = '';
+                                          if (prog.name.includes('Morning')) timeStr = '9am–12pm';
+                                          else if (prog.name.includes('Afternoon')) timeStr = '1pm–4pm';
+                                          else if (prog.name.includes('Full Day')) timeStr = '9am–4pm';
+                                          else if (prog.name.includes('Quran Intensive')) timeStr = '9am–12pm';
+                                          else if (prog.name.includes('Super Saturday')) timeStr = '10am–1pm';
+                                          // Early/Late options
+                                          let options = [];
+                                          if (prog.earlyStart) options.push('Early Start (8:30am)');
+                                          if (prog.lateFinish) options.push('Late Finish (4:30pm)');
+                                          return (
+                                            <div key={idx} className="inline-block px-2 py-1 rounded text-xs bg-blue-100 text-blue-800 border border-blue-200">
+                                              <span className="font-bold">{dateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                                              {` | ${timeStr}`}
+                                              {options.length > 0 && (
+                                                <span className="ml-1 text-purple-700"> | {options.join(', ')}</span>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
                                       </div>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="text-right ml-4">
-                                  <div className="text-sm text-gray-600">
-                                    {p.discount > 0 && (
-                                      <div className="line-through">£{p.subtotal.toFixed(2)}</div>
+                                    ) : (
+                                      <span>No dates selected</span>
                                     )}
                                   </div>
-                                  <div className="font-bold text-lg text-primary">
-                                    £{p.total.toFixed(2)}
-                                  </div>
-                                  {p.discount > 0 && (
-                                    <div className="text-xs text-green-700">
-                                      -£{p.discount.toFixed(2)} discount
-                                    </div>
-                                  )}
                                 </div>
                               </div>
                             ))}
-                            
                             <div className="flex justify-between items-center p-4 bg-primary/10 rounded-lg border border-primary/20">
                               <span className="font-bold text-lg text-primary">➤ Total for {c.name}:</span>
                               <span className="font-bold text-xl text-primary">£{pricing[i].total.toFixed(2)}</span>
@@ -1121,49 +1162,41 @@ export default function SummerRegister() {
                         )}
                       </div>
                     ))}
-                    
                     <div className="mt-8 p-6 bg-white rounded-lg border">
                       <h3 className="text-xl font-bold text-primary mb-4 text-center">Final Summary</h3>
-                      
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-lg">
                           <span>Subtotal:</span>
                           <span className="font-bold">£{subtotal.toFixed(2)}</span>
                         </div>
-                        
                         {fullWeekDiscount > 0 && (
                           <div className="flex justify-between items-center text-lg text-green-700">
                             <span>➤ Full Week Discount (10%):</span>
                             <span className="font-bold">-£{fullWeekDiscount.toFixed(2)}</span>
                           </div>
                         )}
-
                         {siblingDiscount > 0 && (
                           <div className="flex justify-between items-center text-lg text-green-700">
                             <span>➤ Sibling Discount (5%):</span>
                             <span className="font-bold">-£{siblingDiscount.toFixed(2)}</span>
                           </div>
                         )}
-                        
                         {couponDiscount > 0 && (
                           <div className="flex justify-between items-center text-lg text-green-700">
                             <span>➤ Coupon WIC2025 (10%):</span>
                             <span className="font-bold">-£{couponDiscount.toFixed(2)}</span>
                           </div>
                         )}
-                        
                         <div className="border-t pt-3 mt-4">
                           <div className="flex justify-between items-center text-lg font-semibold mb-2">
                             <span>Payment Method:</span>
                             <span className="font-bold">{payment}</span>
                           </div>
-                          
                           <div className="flex justify-between items-center text-2xl font-extrabold text-primary">
                             <span>✅ Total:</span>
                             <span>£{grandTotal.toFixed(2)}</span>
                           </div>
                         </div>
-                        
                         {payment === 'Weekly' && (
                           <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                             <div className="font-bold text-lg text-yellow-800 mb-2">Weekly Payment Plan Selected</div>
@@ -1180,7 +1213,6 @@ export default function SummerRegister() {
                       </div>
                     </div>
                   </div>
-                  
                   <div className="flex justify-between mt-6">
                     <button type="button" onClick={() => setStep(4)} className="btn btn-outline rounded-full px-6 py-2">Back</button>
                     <button 
