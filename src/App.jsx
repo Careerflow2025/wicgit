@@ -17,6 +17,7 @@ import TermsAndConditions from './pages/summer/TermsAndConditions';
 import ThankYou from './pages/summer/ThankYou';
 import Contact from './pages/Contact';
 import { Toaster } from 'react-hot-toast';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -59,6 +60,7 @@ function App() {
               <Route path="/directory" element={<DirectoryPage />} />
               <Route path="/summer-at-wic/terms-and-conditions" element={<TermsAndConditions />} />
               <Route path="/thank-you" element={<ThankYou />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
             </Routes>
           </Suspense>
         </main>

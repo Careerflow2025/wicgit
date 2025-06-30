@@ -1,21 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import businessesData, { businessCategories } from '../data/businesses';
 import BusinessCard from '../components/common/BusinessCard';
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import { Search, Filter, ChevronDown, X } from 'lucide-react';
 
 export default function DirectoryPage() {
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const dropdownContainerRef = useRef(null);
 
   // Load and combine businesses from data file and localStorage on mount
   useEffect(() => {
-    const submittedBusinesses = JSON.parse(localStorage.getItem('submittedBusinesses') || '[]');
-    const combined = [...businessesData, ...submittedBusinesses].sort((a, b) => a.name.localeCompare(b.name));
+    const approvedBusinesses = JSON.parse(localStorage.getItem('approvedBusinesses') || '[]');
+    const combined = [...businessesData, ...approvedBusinesses].sort((a, b) => a.name.localeCompare(b.name));
     setAllBusinesses(combined);
   }, []);
+
+  // Keyboard navigation for category dropdown
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!showCategoryDropdown) return;
+      
+      const key = event.key.toUpperCase();
+      if (/^[A-Z]$/.test(key)) {
+        event.preventDefault();
+        
+        // Find the first category starting with this letter
+        const targetIndex = businessCategories.findIndex(category => 
+          category.toUpperCase().startsWith(key)
+        );
+        
+        if (targetIndex !== -1 && dropdownContainerRef.current) {
+          // Calculate scroll position (accounting for the "All Categories" button)
+          const itemHeight = 40; // Approximate height of each option
+          const scrollTop = (targetIndex + 1) * itemHeight; // +1 for "All Categories" button
+          
+          // Smooth scroll to the target category
+          dropdownContainerRef.current.scrollTo({
+            top: Math.max(0, scrollTop - 100), // Offset by 100px to show some context above
+            behavior: 'smooth'
+          });
+        }
+      }
+    };
+
+    if (showCategoryDropdown) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showCategoryDropdown]);
 
   // Filter businesses whenever filters or the base list change
   useEffect(() => {
@@ -29,12 +67,12 @@ export default function DirectoryPage() {
       );
     }
 
-    if (category) {
-      filtered = filtered.filter(business => business.category === category);
+    if (categories.length > 0) {
+      filtered = filtered.filter(business => categories.includes(business.category));
     }
 
     setFilteredBusinesses(filtered);
-  }, [search, category, allBusinesses]);
+  }, [search, categories, allBusinesses]);
 
   // Calculate business counts for each category
   const getCategoryCounts = () => {
@@ -47,12 +85,12 @@ export default function DirectoryPage() {
 
   const categoryCounts = getCategoryCounts();
 
-  // Generate A-Z filter options
+  // Generate A-Z filter options (by category first letter)
   const alphabetFilter = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     return letters.map(letter => {
       const count = filteredBusinesses.filter(business => 
-        business.name.toUpperCase().startsWith(letter)
+        business.category && business.category.toUpperCase().startsWith(letter)
       ).length;
       return { letter, count };
     });
@@ -60,16 +98,31 @@ export default function DirectoryPage() {
 
   const [selectedLetter, setSelectedLetter] = useState('');
 
-  // Apply A-Z filter
+  // Apply A-Z filter (by category first letter)
   const applyAlphabetFilter = (letter) => {
     setSelectedLetter(letter === selectedLetter ? '' : letter);
   };
 
   const finalFilteredBusinesses = selectedLetter 
     ? filteredBusinesses.filter(business => 
-        business.name.toUpperCase().startsWith(selectedLetter)
+        business.category && business.category.toUpperCase().startsWith(selectedLetter)
       )
     : filteredBusinesses;
+
+  // Toggle category selection
+  const toggleCategory = (cat) => {
+    setCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
+
+  // Remove a selected category
+  const removeCategory = (cat) => {
+    setCategories(prev => prev.filter(c => c !== cat));
+  };
+
+  // Clear all selected categories
+  const clearCategories = () => setCategories([]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -97,42 +150,66 @@ export default function DirectoryPage() {
               >
                 <Filter className="w-4 h-4 text-gray-400" />
                 <span className="text-sm text-gray-700">
-                  {category || 'All Categories'}
+                  {categories.length === 0 ? 'All Categories' : `${categories.length} Selected`}
                 </span>
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </button>
 
               {showCategoryDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-[400px] overflow-y-auto min-w-[260px]">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        setCategory('');
-                        setShowCategoryDropdown(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex justify-between items-center"
-                    >
-                      <span>All Categories</span>
-                      <span className="text-gray-500 text-xs">({allBusinesses.length})</span>
-                    </button>
-                    {businessCategories.map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => {
-                          setCategory(cat);
-                          setShowCategoryDropdown(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex justify-between items-center"
-                      >
-                        <span>{cat}</span>
-                        <span className="text-gray-500 text-xs">({categoryCounts[cat] || 0})</span>
-                      </button>
-                    ))}
+                <div 
+                  ref={dropdownContainerRef}
+                  className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-[600px] overflow-y-auto min-w-[260px]"
+                >
+                  <div className="p-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-200">
+                    💡 Tip: Press any letter (A-Z) to jump to categories starting with that letter
                   </div>
+                  <button
+                    onClick={() => {
+                      clearCategories();
+                      setShowCategoryDropdown(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex justify-between items-center"
+                  >
+                    <span>All Categories</span>
+                    <span className="text-gray-500 text-xs">({allBusinesses.length})</span>
+                  </button>
+                  {businessCategories.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategory(cat)}
+                      className={`w-full px-4 py-2 text-left text-sm flex justify-between items-center hover:bg-gray-50 ${categories.includes(cat) ? 'bg-primary-50 font-bold text-primary-700' : ''}`}
+                    >
+                      <span>
+                        <input
+                          type="checkbox"
+                          checked={categories.includes(cat)}
+                          readOnly
+                          className="mr-2 accent-primary-500"
+                        />
+                        {cat}
+                      </span>
+                      <span className="text-gray-500 text-xs">({categoryCounts[cat] || 0})</span>
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
           </div>
+
+          {/* Selected Categories as tags */}
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {categories.map(cat => (
+                <span key={cat} className="inline-flex items-center bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-xs font-medium">
+                  {cat}
+                  <button onClick={() => removeCategory(cat)} className="ml-2 text-primary-700 hover:text-primary-900 focus:outline-none">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              <button onClick={clearCategories} className="ml-2 text-xs text-gray-500 underline">Clear All</button>
+            </div>
+          )}
 
           {/* A-Z Filter */}
           <div className="mt-4 flex flex-wrap gap-1">
@@ -162,8 +239,8 @@ export default function DirectoryPage() {
         <div className="mb-6">
           <p className="text-sm text-gray-600">
             Showing {finalFilteredBusinesses.length} of {allBusinesses.length} businesses
-            {category && ` in ${category}`}
-            {selectedLetter && ` starting with "${selectedLetter}"`}
+            {categories.length > 0 && ` in ${categories.join(', ')}`}
+            {selectedLetter && ` in categories starting with "${selectedLetter}"`}
           </p>
         </div>
 

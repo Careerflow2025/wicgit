@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { businessCategories } from '../data/businesses';
 import toast from 'react-hot-toast';
+import { ChevronDown } from 'lucide-react';
 
 export default function BusinessSubmissionForm() {
   const [formData, setFormData] = useState({
@@ -21,7 +22,61 @@ export default function BusinessSubmissionForm() {
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const fileInputRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const dropdownContainerRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCategoryDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Keyboard navigation for category dropdown
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!showCategoryDropdown) return;
+      
+      const key = event.key.toUpperCase();
+      if (/^[A-Z]$/.test(key)) {
+        event.preventDefault();
+        
+        // Find the first category starting with this letter
+        const targetIndex = businessCategories.findIndex(category => 
+          category.toUpperCase().startsWith(key)
+        );
+        
+        if (targetIndex !== -1 && dropdownContainerRef.current) {
+          // Calculate scroll position
+          const itemHeight = 40; // Approximate height of each option
+          const scrollTop = targetIndex * itemHeight;
+          
+          // Smooth scroll to the target category
+          dropdownContainerRef.current.scrollTo({
+            top: Math.max(0, scrollTop - 100), // Offset by 100px to show some context above
+            behavior: 'smooth'
+          });
+        }
+      }
+    };
+
+    if (showCategoryDropdown) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showCategoryDropdown]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +95,14 @@ export default function BusinessSubmissionForm() {
         [name]: value
       }));
     }
+  };
+
+  const handleCategorySelect = (category) => {
+    setFormData(prev => ({
+      ...prev,
+      category: category
+    }));
+    setShowCategoryDropdown(false);
   };
 
   const handleFileChange = (e) => {
@@ -153,23 +216,47 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Category */}
-          <div>
+          <div className="relative" ref={dropdownRef}>
             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
               Business Category *
             </label>
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
-              className="input-style"
-              required
+            <button
+              type="button"
+              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              className={`w-full px-4 py-2 text-left border rounded-lg bg-gray-50 hover:bg-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow duration-200 flex justify-between items-center ${
+                !formData.category ? 'border-red-300' : 'border-gray-300'
+              }`}
             >
-              <option value="">Select a category</option>
-              {businessCategories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+              <span className={formData.category ? 'text-gray-900' : 'text-gray-500'}>
+                {formData.category || 'Select a category'}
+              </span>
+              <ChevronDown className="w-4 h-4 text-gray-400" />
+            </button>
+
+            {showCategoryDropdown && (
+              <div 
+                ref={dropdownContainerRef}
+                className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-y-auto" 
+                style={{ maxHeight: '600px' }}
+              >
+                <div className="p-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-200">
+                  💡 Tip: Press any letter (A-Z) to jump to categories starting with that letter
+                </div>
+                {businessCategories.map(category => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => handleCategorySelect(category)}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            )}
+            {!formData.category && (
+              <p className="mt-1 text-sm text-red-600">Please select a business category</p>
+            )}
           </div>
 
           {/* Website */}
