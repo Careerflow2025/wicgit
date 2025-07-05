@@ -444,10 +444,8 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         setLogoFile(null);
         setLogoPreview(null);
         
-        // Close modal after a short delay to let user see the success message
-        setTimeout(() => {
-          onClose();
-        }, 1500);
+        // Close modal immediately after success message
+        onClose();
         
       } else {
         // Submit business group - save each business individually
@@ -503,10 +501,8 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         // Reset businesses array
         setBusinesses([createNewBusiness()]);
         
-        // Close modal after a short delay to let user see the success message
-        setTimeout(() => {
-          onClose();
-        }, 1500);
+        // Close modal immediately after success message
+        onClose();
       }
 
       console.log('🎉 Form submission completed successfully');
