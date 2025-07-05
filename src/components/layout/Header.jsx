@@ -31,7 +31,7 @@ export default function Header() {
               </Link>
             </div>
             {/* Desktop navigation */}
-            <div className="hidden md:flex md:items-center md:space-x-8 flex-1 justify-center">
+            <div className="hidden md:flex md:items-center md:space-x-4 flex-1 justify-center">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
                 return (
@@ -39,23 +39,31 @@ export default function Header() {
                     key={item.name}
                     to={item.href}
                     className={
-                      `px-3 py-2 text-sm font-medium rounded transition-colors duration-200 ` +
+                      `px-2 py-2 text-sm font-medium rounded transition-colors duration-200 ` +
                       (isActive
                         ? 'bg-yellow-300 text-black shadow'
                         : 'text-gray-700 hover:text-black hover:bg-yellow-300')
                     }
+                    style={{ whiteSpace: 'nowrap' }}
                   >
                     {item.name}
                   </Link>
                 );
               })}
             </div>
-            {/* Desktop Summer button */}
-            <div className="hidden md:flex items-center justify-end ml-4">
+            {/* Desktop Summer and Directory buttons */}
+            <div className="hidden md:flex items-center justify-end ml-2 space-x-2">
+              <Link
+                to="/directory"
+                className="px-3 py-1.5 rounded-full font-bold text-sm bg-green-500 text-white shadow-lg hover:bg-green-600 transition-all duration-300 animate-pulse border-2 border-green-500"
+                style={{ minWidth: '120px', textAlign: 'center', whiteSpace: 'nowrap' }}
+              >
+                WIC DIRECTORY
+              </Link>
               <Link
                 to="/summer"
                 className="px-3 py-1.5 rounded-full font-bold text-sm bg-yellow-400 text-black shadow-lg hover:bg-yellow-300 transition-all duration-300 animate-pulse border-2 border-yellow-400"
-                style={{ minWidth: '100px', textAlign: 'center' }}
+                style={{ minWidth: '120px', textAlign: 'center', whiteSpace: 'nowrap' }}
               >
                 SUMMER AT WIC
               </Link>
@@ -73,13 +81,20 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile-only Summer button bar */}
+          {/* Mobile-only Summer and Directory buttons bar */}
           <div className="block md:hidden w-full bg-white shadow-sm">
-            <div className="flex justify-center items-center py-2">
+            <div className="flex justify-center items-center py-2 space-x-2">
+              <Link
+                to="/directory"
+                className="px-4 py-2 rounded-full font-bold text-sm bg-green-500 text-white shadow-lg hover:bg-green-600 transition-all duration-300 animate-pulse border-2 border-green-500"
+                style={{ minWidth: '120px', textAlign: 'center', whiteSpace: 'nowrap' }}
+              >
+                WIC DIRECTORY
+              </Link>
               <Link
                 to="/summer"
-                className="px-4 py-2 rounded-full font-bold text-sm bg-yellow-400 text-black shadow-lg hover:bg-yellow-300 transition-all duration-300 border-2 border-yellow-400"
-                style={{ minWidth: '100px', textAlign: 'center' }}
+                className="px-4 py-2 rounded-full font-bold text-sm bg-yellow-400 text-black shadow-lg hover:bg-yellow-300 transition-all duration-300 animate-pulse border-2 border-yellow-400"
+                style={{ minWidth: '120px', textAlign: 'center', whiteSpace: 'nowrap' }}
               >
                 SUMMER AT WIC
               </Link>

@@ -1,25 +1,155 @@
 // Real business data extracted from the provided URLs
-const businesses = [];
-
-// Categories for the dropdown (expanded, no duplicates, sorted)
-const additionalCategories = [
-  "Gym", "Recruitment Agency", "Travel Agency", "Daycare Centre", "Pharmacy", "Supermarket", "Mini Market", "Clinic", "Dental Clinic", "Real Estate Agency", "Event Venue", "Event Catering", "Shawarma Shop", "Mobile Phone Shop", "Mobile Repair Shop", "Beauty Salon", "Barbershop", "Car Dealership", "Used Car Dealer", "Mechanic Garage", "Driving School", "Pet Store", "Fish Market", "Tailor Shop", "Dry Cleaner", "Ice Cream Shop", "Juice Bar", "Optical Shop", "Furniture Store", "Electronics Store", "Gift Shop", "Jewellery Store", "Hardware Store", "Building Supplies", "Medical Equipment Supplier", "Printing Shop", "Signage & Banners", "Internet Café", "Software Company", "Digital Marketing Agency", "Cleaning Company", "Construction Company", "Courier Service", "Logistics Company", "Taxi Company", "Car Rental", "Security Company", "Waste Removal", "Laundry Service", "Tutor Centre", "Online Retailer", "Packaging Supplier", "Tea Shop", "Café", "Restaurant", "Burger Shop", "Bookstore", "Stationery Shop", "Accounting Firm", "Legal Firm", "Immigration Consultant", "Insurance Broker", "Garage Door Installer", "Locksmith", "Plumbing Company", "Electrical Contractor", "Roofing Company", "Landscaping Company", "Architectural Firm", "Engineering Firm", "Photography Studio", "Videography Studio", "Media Company", "Charity Organisation", "NGO", "Construction Supplies", "CCTV Installer", "Home Decor Store", "Kitchen Installer", "Bathroom Fitter", "Tiling Company", "Flooring Installer", "Painter & Decorator", "Window Cleaning Service", "Solar Panel Installer", "Event Planner", "Wedding Planner", "Maternity Care Service", "Personal Trainer Business", "Massage Therapy Centre", "Chiropractic Clinic", "Cosmetic Clinic", "Nutritionist Practice", "Mental Health Clinic", "Language School", "Driving Instructor Business", "Consultancy Firm", "Freight Forwarder", "Halal Butcher", "Bakery", "Cake Shop", "Clothing Brand", "Perfume Shop"
-];
-
-const baseCategories = [
-  "Accountant", "Architect", "Artist", "Auto Mechanic", "Babysitter", "Baker", "Barber", "Builder", "Butcher", "Carpenter", "Caterer", "Cleaner", "Consultant", "Contractor", "Courier", "Decorator", "Dentist", "Designer", "Doctor", "Driver", "Electrician", "Engineer", "Event Planner", "Farmer", "Florist", "Gardener", "Grocer", "Hairdresser", "Handyman", "Home Tutor", "IT Support", "Jeweller", "Labourer", "Landscaper", "Lawyer", "Makeup Artist", "Mechanic", "Mobile Repair", "Mover", "Nutritionist", "Optician", "Painter", "Personal Trainer", "Pharmacist", "Photographer", "Plumber", "Real Estate Agent", "Recruiter", "Reflexologist", "Restaurant", "Security Guard", "Shoe Repair", "Software Developer", "Tailor", "Taxi Service", "Teacher", "Technician", "Therapist", "Tiler", "Translator", "Travel Agent", "Tutor", "Veterinarian", "Videographer", "Waiter", "Web Developer", "Welder", "Writer",
-  // Previous expansion
-  "Advertising Agency", "App Developer", "Beauty Salon", "Bookkeeper", "Car Dealership", "Car Rental", "Car Wash", "Charity", "Chef", "Chiropractor", "Clothing Store", "Coach", "Dance Instructor", "Data Entry", "Dog Walker", "Driving School", "Dry Cleaner", "Fabric Shop", "Fashion Stylist", "Financial Advisor", "Fisherman", "Freelancer", "Furniture Maker", "Graphic Designer", "Hardware Store", "Health Coach", "HVAC Specialist", "Interior Designer", "Marketing Agency", "Massage Therapist", "Musician", "Nail Technician", "Online Store", "Pet Groomer", "Physiotherapist", "Print Shop", "Private Driver", "Roofer", "Social Media Manager", "Tattoo Artist", "Upholsterer", "Wedding Planner"
-];
-
-const allCategoriesSet = new Set(baseCategories.map(c => c.trim().toLowerCase()));
-for (const cat of additionalCategories) {
-  if (!allCategoriesSet.has(cat.trim().toLowerCase())) {
-    baseCategories.push(cat);
-    allCategoriesSet.add(cat.trim().toLowerCase());
+const businesses = [
+  {
+    id: 1,
+    name: "Watford Halal Butcher",
+    category: "Butcher",
+    address: "123 High Street, Watford, WD17 1AB",
+    phone: "01923 123456",
+    email: "info@watfordhalal.co.uk",
+    website: "https://watfordhalal.co.uk",
+    description: "Premium halal meat and poultry supplier serving the Watford community for over 10 years.",
+    socialMedia: {
+      facebook: "https://facebook.com/watfordhalal",
+      instagram: "@watfordhalal"
+    }
+  },
+  {
+    id: 2,
+    name: "Masjid Al-Noor Bookstore",
+    category: "Islamic Services",
+    address: "456 Queens Road, Watford, WD17 2CD",
+    phone: "01923 654321",
+    email: "books@masjidalnoor.org",
+    description: "Islamic books, Quran, prayer items and religious accessories.",
+    socialMedia: {
+      facebook: "https://facebook.com/masjidalnoor"
+    }
+  },
+  {
+    id: 3,
+    name: "Bismillah Restaurant",
+    category: "Restaurant",
+    address: "789 Market Street, Watford, WD17 3EF",
+    phone: "01923 789012",
+    email: "info@bismillahrestaurant.co.uk",
+    website: "https://bismillahrestaurant.co.uk",
+    description: "Authentic Pakistani and Indian halal cuisine in the heart of Watford.",
+    socialMedia: {
+      facebook: "https://facebook.com/bismillahwatford",
+      instagram: "@bismillahwatford"
+    }
+  },
+  {
+    id: 4,
+    name: "Green Valley Islamic School",
+    category: "Islamic Services",
+    address: "321 School Lane, Watford, WD17 4GH",
+    phone: "01923 345678",
+    email: "admin@greenvalleyschool.org.uk",
+    website: "https://greenvalleyschool.org.uk",
+    description: "Quality Islamic education for children aged 5-16 with modern facilities and qualified teachers.",
+    socialMedia: {
+      facebook: "https://facebook.com/greenvalleyschool"
+    }
+  },
+  {
+    id: 5,
+    name: "Crescent Pharmacy",
+    category: "Pharmacy",
+    address: "654 Victoria Road, Watford, WD17 5IJ",
+    phone: "01923 567890",
+    email: "info@crescentpharmacy.co.uk",
+    description: "Full-service pharmacy with halal medicines and health consultations.",
+    socialMedia: {
+      facebook: "https://facebook.com/crescentpharmacy"
+    }
   }
-}
+];
 
-export const businessCategories = baseCategories.sort((a, b) => a.localeCompare(b));
+// Updated business categories list
+export const businessCategories = [
+  "Accountant",
+  "App Developer", 
+  "Arabic Language Tutor",
+  "Architect",
+  "Architectural Firm",
+  "Babysitter",
+  "Barber",
+  "Barbershop",
+  "Beauty Salon",
+  "Builder",
+  "Butcher",
+  "Calligraphy Services",
+  "Car Wash",
+  "Carpenter",
+  "Caterer",
+  "Charity Organisation",
+  "Cleaner",
+  "Consulting",
+  "Dentist",
+  "Digital Marketing Agency",
+  "Driving Instructor Business",
+  "Dry Cleaner",
+  "Electrician",
+  "Event Planner",
+  "Farmer",
+  "Freight Forwarder",
+  "Gardener",
+  "Graphic Designer",
+  "Grocer",
+  "Gym",
+  "Islamic Services",
+  "IT Support",
+  "Janazah Prayer Hall",
+  "Jeweller or store",
+  "Labourer",
+  "Landscaper",
+  "Landscaping Company",
+  "Laundry Service",
+  "Lawyer",
+  "Locksmith",
+  "Mechanic",
+  "Mobile Phone Shop",
+  "Nikah Services",
+  "Painter & Decorator",
+  "Personal Trainer",
+  "Pharmacy",
+  "Photographer",
+  "Plumber",
+  "Plumbing Company",
+  "Printing Shop",
+  "Private Driver",
+  "Quran Academy",
+  "Real Estate Agency",
+  "Recruitment Agency",
+  "Removal Company",
+  "Restaurant",
+  "Roofing Company",
+  "Roofer",
+  "Ruqyah Services",
+  "Security Guard",
+  "Taxi Company",
+  "Videographer"
+];
+
+// Subcategories for specific categories
+export const categorySubcategories = {
+  "Consulting": [
+    "Life Coaching",
+    "Business Consulting",
+    "Financial Consulting",
+    "Management Consulting",
+    "Marketing Consulting",
+    "HR Consulting",
+    "Legal Consulting",
+    "IT Consulting",
+    "Educational Consulting",
+    "Health & Wellness Consulting"
+  ]
+  // Future subcategories can be added here
+  // "Restaurant": ["Fast Food", "Fine Dining", "Cafe"],
+  // "Islamic Services": ["Education", "Religious", "Community"]
+};
 
 export default businesses; 

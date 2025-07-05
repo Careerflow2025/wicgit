@@ -14,6 +14,7 @@ function encodeAddress(address) {
 export default function BusinessCard({
   name,
   category,
+  subcategory,
   description,
   address,
   phone,
@@ -23,9 +24,8 @@ export default function BusinessCard({
   heroImage,
   services = [],
   socialMedia = {},
-  images = defaultImages,
+  images = defaultImages
 }) {
-
   // Use logo if available, otherwise hero image, otherwise a placeholder.
   const displayImage = logo || heroImage || '/assets/images/placeholder.png';
 
@@ -36,9 +36,16 @@ export default function BusinessCard({
     <div className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
       {/* Category Badge */}
       <div className="px-3 py-1 bg-primary-100">
-        <span className="text-xs font-medium text-primary-700 uppercase tracking-wide">
-          {category}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-xs font-medium text-primary-700 uppercase tracking-wide">
+            {category}
+          </span>
+          {subcategory && (
+            <span className="text-xs text-primary-600 mt-0.5">
+              {subcategory}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Business Image */}

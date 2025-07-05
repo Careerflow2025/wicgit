@@ -336,16 +336,16 @@ const getExcludedDatesForProgramme = (programmeName) => {
   // Use 23 July for non-Saturday, 24 July for Super Saturday
   const start = baseName === 'Super Saturday' ? new Date(2025, 6, 24) : new Date(2025, 6, 23);
   const end = new Date(2025, 7, 30);
-
+  
   let currentDate = new Date(start);
-
+  
   while (currentDate <= end) {
     if (!isValidDateForProgramme(currentDate, programmeName)) {
       excludedDates.push(new Date(currentDate));
     }
     currentDate.setDate(currentDate.getDate() + 1);
   }
-
+  
   return excludedDates;
 };
 
@@ -582,7 +582,7 @@ export default function SummerRegister() {
         terms_accepted: agree ? 'Yes' : 'No',
         registration_date: new Date().toLocaleDateString('en-GB'),
       };
-
+      
       // Send to customer (parent)
       await emailjs.send(
         'service_pghoqyc',
@@ -1142,15 +1142,15 @@ export default function SummerRegister() {
                                               {` | ${timeStr}`}
                                               {options.length > 0 && (
                                                 <span className="ml-1 text-purple-700"> | {options.join(', ')}</span>
-                                              )}
-                                            </div>
+                                    )}
+                                  </div>
                                           );
                                         })}
                                       </div>
                                     ) : (
                                       <span>No dates selected</span>
-                                    )}
-                                  </div>
+                                  )}
+                                </div>
                                 </div>
                               </div>
                             ))}

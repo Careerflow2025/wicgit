@@ -55,30 +55,19 @@ export default function HeroSlider() {
             <p className="text-lg md:text-xl mb-8">
               Join our vibrant community and experience the best in Islamic education and community services.
             </p>
-            {/* MOBILE HERO BUTTONS & ACADEMY SECTION */}
-            <div className="block md:hidden w-full">
-              {/* WhatsApp + Volunteer buttons row */}
-              <div className="flex flex-row justify-center items-center gap-2 mb-4 w-full">
-                <a
-                  href="https://chat.whatsapp.com/GEiY5uHzRHEBZpKLKelTfR"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whitespace-nowrap px-3 py-2 rounded-full bg-[#25D366] text-white font-bold text-sm border-2 border-[#25D366] hover:bg-[#1ebe5d] hover:border-[#1ebe5d] transition w-auto min-w-[120px] text-center"
-                  style={{lineHeight: '1.2'}}
-                >
-                  Join WhatsApp Group
-                </a>
-                <Link
-                  to="/contact"
-                  className="whitespace-nowrap px-3 py-2 rounded-full border-2 border-white text-white font-bold text-sm hover:bg-white hover:text-primary transition w-auto min-w-[100px] text-center"
-                  style={{lineHeight: '1.2'}}
-                >
-                  Volunteer
-                </Link>
-              </div>
+            {/* MOBILE HERO WIC ACADEMY SECTION (below main buttons) */}
+            <div className="block md:hidden w-full mt-6">
               {/* Join WIC Academy heading */}
-              <div className="flex justify-center mb-3">
+              <div className="flex justify-center mb-1">
                 <span className="text-white text-2xl font-bold drop-shadow-lg text-center">Join WIC Academy</span>
+              </div>
+              {/* WIC Academy description */}
+              <div className="flex justify-center mb-3">
+                <p className="text-white text-center text-base leading-snug max-w-xs">
+                  WIC Academy offers a nurturing environment for children, teens, and adults to learn, grow, and thrive.<br/>
+                  Our programmes combine Islamic values, academic excellence, and personal development.<br/>
+                  Join us to build strong faith, character, and community.
+                </p>
               </div>
               {/* 4 round buttons for mobile */}
               <div className="flex flex-wrap justify-center gap-2 w-full">
@@ -100,8 +89,8 @@ export default function HeroSlider() {
         </div>
       </div>
       {/* DESKTOP HERO BUTTONS & ACADEMY SECTION */}
-      <div className="hidden md:flex absolute bottom-8 left-0 w-full z-40 flex-row justify-between items-center gap-4 flex-wrap px-6 sm:px-12">
-        <div className="flex flex-row gap-4 items-center ml-4 sm:ml-12">
+      <div className="hidden md:flex absolute bottom-16 left-0 w-full z-40 flex-row justify-between items-center gap-4 flex-wrap px-6 sm:px-12">
+        <div className="flex flex-row gap-4 items-center ml-4 sm:ml-12" style={{marginTop: 'auto'}}>
           <a
             href="https://chat.whatsapp.com/GEiY5uHzRHEBZpKLKelTfR"
             target="_blank"
@@ -116,6 +105,12 @@ export default function HeroSlider() {
         </div>
         <div className="flex flex-col items-center mr-4 sm:mr-12">
           <span className="text-white text-3xl md:text-5xl font-bold drop-shadow-lg mb-3 text-center">Join WIC Academy</span>
+          {/* WIC Academy description for desktop */}
+          <p className="text-white text-center text-lg leading-snug max-w-md mb-3">
+            WIC Academy offers a nurturing environment for children, teens, and adults to learn, grow, and thrive.<br/>
+            Our programmes combine Islamic values, academic excellence, and personal development.<br/>
+            Join us to build strong faith, character, and community.
+          </p>
           <div className="flex flex-row gap-4 items-center">
             <Link to="/contact" className="px-4 py-2 rounded-full font-bold text-base bg-white text-primary shadow-lg hover:bg-primary hover:text-white transition-all duration-300 border-2 border-primary">
               5-7
