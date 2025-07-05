@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcategory Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .subcategory-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .subcategory-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .subcategory-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Subcategory Functionality Test</h1>
+        
+        <div id="test-results">
+            <div class="test-section">
+                <h3>Loading test data...</h3>
+                <p>Please wait while we check the subcategory configuration.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Test the subcategory data
+        async function testSubcategories() {
+            const resultsContainer = document.getElementById('test-results');
+            
+            try {
+                // Import the data
+                const { businessCategories, categorySubcategories } = await import('./src/data/businesses.js');
+                
+                let html = '';
+                
+                // Test 1: Check if Consulting category exists
+                const hasConsulting = businessCategories.includes('Consulting');
+                html += `
+                    <div class="test-section ${hasConsulting ? 'success' : 'error'}">
+                        <h3>✅ Test 1: Consulting Category</h3>
+                        <p>Status: ${hasConsulting ? 'FOUND' : 'NOT FOUND'}</p>
+                        <p>The "Consulting" category ${hasConsulting ? 'exists' : 'does not exist'} in the business categories list.</p>
+                    </div>
+                `;
+                
+                // Test 2: Check if subcategories exist for Consulting
+                const consultingSubcategories = categorySubcategories?.Consulting || [];
+                const hasSubcategories = consultingSubcategories.length > 0;
+                html += `
+                    <div class="test-section ${hasSubcategories ? 'success' : 'error'}">
+                        <h3>✅ Test 2: Consulting Subcategories</h3>
+                        <p>Status: ${hasSubcategories ? `FOUND (${consultingSubcategories.length} items)` : 'NOT FOUND'}</p>
+                        ${hasSubcategories ? `
+                            <div class="subcategory-list">
+                                <strong>Available subcategories:</strong>
+                                ${consultingSubcategories.map(sub => `<div class="subcategory-item">• ${sub}</div>`).join('')}
+                            </div>
+                        ` : '<p>No subcategories found for Consulting.</p>'}
+                    </div>
+                `;
+                
+                // Test 3: Check data structure
+                const dataStructureValid = typeof categorySubcategories === 'object' && categorySubcategories !== null;
+                html += `
+                    <div class="test-section ${dataStructureValid ? 'success' : 'error'}">
+                        <h3>✅ Test 3: Data Structure</h3>
+                        <p>Status: ${dataStructureValid ? 'VALID' : 'INVALID'}</p>
+                        <p>categorySubcategories type: ${typeof categorySubcategories}</p>
+                        <p>Available categories with subcategories: ${Object.keys(categorySubcategories || {}).join(', ') || 'None'}</p>
+                    </div>
+                `;
+                
+                // Test 4: Simulate form behavior
+                const shouldShowSubcategory = hasConsulting && hasSubcategories;
+                html += `
+                    <div class="test-section ${shouldShowSubcategory ? 'success' : 'error'}">
+                        <h3>✅ Test 4: Form Behavior Simulation</h3>
+                        <p>Status: ${shouldShowSubcategory ? 'SHOULD WORK' : 'WILL NOT WORK'}</p>
+                        <p>When "Consulting" is selected, subcategory dropdown ${shouldShowSubcategory ? 'should appear' : 'will not appear'}.</p>
+                        <p>Condition: formData.category === "Consulting" && categorySubcategories["Consulting"] = ${shouldShowSubcategory}</p>
+                    </div>
+                `;
+                
+                // Summary
+                const allTestsPassed = hasConsulting && hasSubcategories && dataStructureValid && shouldShowSubcategory;
+                html += `
+                    <div class="test-section ${allTestsPassed ? 'success' : 'error'}">
+                        <h3>📋 Summary</h3>
+                        <p><strong>Overall Status: ${allTestsPassed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}</strong></p>
+                        <p>${allTestsPassed ? 
+                            'The subcategory functionality should work correctly. If it\'s not showing in your form, there may be a caching issue or JavaScript error.' : 
+                            'There are issues with the subcategory configuration that need to be fixed.'
+                        }</p>
+                    </div>
+                `;
+                
+                resultsContainer.innerHTML = html;
+                
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="test-section error">
+                        <h3>❌ Error Loading Data</h3>
+                        <p>Failed to load the business data: ${error.message}</p>
+                        <p>Make sure you're running this test from the correct directory and the development server is running.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Run the test
+        testSubcategories();
+    </script>
+</body>
+</html> 

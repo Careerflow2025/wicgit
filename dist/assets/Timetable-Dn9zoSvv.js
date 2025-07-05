@@ -1,0 +1,1 @@
+import{j as e}from"./index-N6LsbAn2.js";function a(){return e.jsx("div",{className:"min-h-screen bg-gray-50 flex flex-col items-center justify-center",children:e.jsx("img",{src:"/images/TIMETABLE.png",alt:"WIC Timetable",className:"w-full max-w-6xl mx-auto my-20 rounded-lg shadow-lg object-contain"})})}export{a as default};

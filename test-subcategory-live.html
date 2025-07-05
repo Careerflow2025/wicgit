@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcategory Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .subcategory-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        .debug {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Subcategory Test</h1>
+    
+    <div class="debug" id="debug-info">
+        <h3>Debug Information:</h3>
+        <div id="debug-content"></div>
+    </div>
+    
+    <form>
+        <div class="form-group">
+            <label for="category">Select Category:</label>
+            <select id="category" onchange="handleCategoryChange()">
+                <option value="">-- Select Category --</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Butcher">Butcher</option>
+                <option value="Accountant">Accountant</option>
+            </select>
+        </div>
+        
+        <div class="form-group hidden" id="subcategory-group">
+            <label for="subcategory">Select Subcategory:</label>
+            <select id="subcategory">
+                <option value="">-- Select Subcategory --</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <button type="button" onclick="testForm()">Test Form Data</button>
+        </div>
+    </form>
+    
+    <script>
+        // Define the subcategories (same as in the React app)
+        const categorySubcategories = {
+            "Consulting": [
+                "Life Coaching",
+                "Business Consulting",
+                "Financial Consulting",
+                "Management Consulting",
+                "Marketing Consulting",
+                "HR Consulting",
+                "Legal Consulting",
+                "IT Consulting",
+                "Educational Consulting",
+                "Health & Wellness Consulting"
+            ]
+        };
+        
+        function updateDebugInfo(message) {
+            const debugContent = document.getElementById('debug-content');
+            debugContent.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+        }
+        
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('category');
+            const subcategoryGroup = document.getElementById('subcategory-group');
+            const subcategorySelect = document.getElementById('subcategory');
+            
+            const selectedCategory = categorySelect.value;
+            
+            updateDebugInfo('Category selected: ' + selectedCategory);
+            
+            // Check if category has subcategories
+            if (selectedCategory && categorySubcategories[selectedCategory]) {
+                updateDebugInfo('Category has subcategories: ' + categorySubcategories[selectedCategory].length);
+                
+                // Clear previous subcategories
+                subcategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+                
+                // Add new subcategories
+                categorySubcategories[selectedCategory].forEach(subcategory => {
+                    const option = document.createElement('option');
+                    option.value = subcategory;
+                    option.textContent = subcategory;
+                    subcategorySelect.appendChild(option);
+                });
+                
+                // Show subcategory group
+                subcategoryGroup.classList.remove('hidden');
+                updateDebugInfo('Subcategory dropdown shown');
+            } else {
+                // Hide subcategory group
+                subcategoryGroup.classList.add('hidden');
+                updateDebugInfo('No subcategories found, dropdown hidden');
+            }
+        }
+        
+        function testForm() {
+            const category = document.getElementById('category').value;
+            const subcategory = document.getElementById('subcategory').value;
+            
+            updateDebugInfo('Form test - Category: ' + category + ', Subcategory: ' + subcategory);
+            
+            alert('Category: ' + category + '\nSubcategory: ' + subcategory);
+        }
+        
+        // Initialize debug info
+        updateDebugInfo('Test page loaded');
+        updateDebugInfo('Available categories with subcategories: ' + Object.keys(categorySubcategories).join(', '));
+    </script>
+</body>
+</html> 

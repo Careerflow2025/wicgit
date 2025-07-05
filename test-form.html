@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .debug {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .subcategory-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Subcategory Form Test</h1>
+    
+    <div class="debug" id="debug">
+        <strong>Debug:</strong> <span id="debug-text">No category selected</span>
+    </div>
+    
+    <form>
+        <div class="form-group">
+            <label for="category">Business Category:</label>
+            <select id="category" onchange="handleCategoryChange()">
+                <option value="">Select a category</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Butcher">Butcher</option>
+            </select>
+        </div>
+        
+        <div class="form-group subcategory-section hidden" id="subcategory-section">
+            <label for="subcategory">Specialism:</label>
+            <select id="subcategory">
+                <option value="">Select a specialism</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <button type="button" onclick="testSubmit()">Test Submit</button>
+        </div>
+    </form>
+    
+    <script>
+        const categorySubcategories = {
+            "Consulting": [
+                "Life Coaching",
+                "Business Consulting",
+                "Financial Consulting",
+                "Management Consulting",
+                "Marketing Consulting",
+                "HR Consulting",
+                "Legal Consulting",
+                "IT Consulting",
+                "Educational Consulting",
+                "Health & Wellness Consulting"
+            ]
+        };
+        
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('category');
+            const subcategorySection = document.getElementById('subcategory-section');
+            const subcategorySelect = document.getElementById('subcategory');
+            const debugText = document.getElementById('debug-text');
+            
+            const selectedCategory = categorySelect.value;
+            
+            // Update debug info
+            const hasSubcategories = !!(selectedCategory && categorySubcategories[selectedCategory]);
+            debugText.textContent = `Category: "${selectedCategory}" | Has subcategories: ${hasSubcategories ? 'YES' : 'NO'}`;
+            
+            console.log('Category selected:', selectedCategory);
+            console.log('Has subcategories:', hasSubcategories);
+            
+            if (hasSubcategories) {
+                // Clear and populate subcategories
+                subcategorySelect.innerHTML = '<option value="">Select a specialism</option>';
+                categorySubcategories[selectedCategory].forEach(subcategory => {
+                    const option = document.createElement('option');
+                    option.value = subcategory;
+                    option.textContent = subcategory;
+                    subcategorySelect.appendChild(option);
+                });
+                
+                // Show subcategory section
+                subcategorySection.classList.remove('hidden');
+                console.log('Subcategory section shown');
+            } else {
+                // Hide subcategory section
+                subcategorySection.classList.add('hidden');
+                console.log('Subcategory section hidden');
+            }
+        }
+        
+        function testSubmit() {
+            const category = document.getElementById('category').value;
+            const subcategory = document.getElementById('subcategory').value;
+            
+            console.log('Submit test:', { category, subcategory });
+            alert(`Category: ${category}\nSubcategory: ${subcategory}`);
+        }
+    </script>
+</body>
+</html> 

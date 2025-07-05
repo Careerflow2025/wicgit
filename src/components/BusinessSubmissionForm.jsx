@@ -361,7 +361,7 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     console.log('🔍 Form submission started');
     console.log('📝 Submission type:', submissionType);
     console.log('📊 Form data:', formData);
@@ -375,16 +375,16 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         if (!formData.name || !formData.name.trim()) {
           toast.error('Please enter a business name');
           setIsSubmitting(false);
-          return;
-        }
+        return;
+      }
       } else {
         // Check if at least one business has a name
         const hasValidBusiness = businesses.some(business => business.name && business.name.trim());
         if (!hasValidBusiness) {
           toast.error('Please enter at least one business name');
           setIsSubmitting(false);
-          return;
-        }
+        return;
+      }
       }
 
       console.log('✅ Validation passed');
@@ -392,11 +392,11 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
       if (submissionType === 'single') {
         // Submit single business
         const businessData = {
-          ...formData,
+        ...formData,
           id: Date.now() + Math.random(),
           submittedAt: new Date().toISOString(),
           status: 'pending',
-          logo: logoPreview || null,
+        logo: logoPreview || null,
           logoPreview: logoPreview || null
         };
 
@@ -423,8 +423,8 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         }
 
         toast.success('Business submitted successfully! It will be reviewed by our admin team.');
-        
-        // Reset form
+
+      // Reset form
         setFormData({
           name: '',
           category: '',
@@ -443,6 +443,11 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         });
         setLogoFile(null);
         setLogoPreview(null);
+        
+        // Close modal after a short delay to let user see the success message
+        setTimeout(() => {
+          onClose();
+        }, 1500);
         
       } else {
         // Submit business group - save each business individually
@@ -497,6 +502,11 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
         
         // Reset businesses array
         setBusinesses([createNewBusiness()]);
+        
+        // Close modal after a short delay to let user see the success message
+        setTimeout(() => {
+          onClose();
+        }, 1500);
       }
 
       console.log('🎉 Form submission completed successfully');
@@ -510,21 +520,21 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
   };
 
   const resetForms = () => {
-    setFormData({
-      name: '',
-      website: '',
-      email: '',
-      phone: '',
-      category: '',
+      setFormData({
+        name: '',
+        website: '',
+        email: '',
+        phone: '',
+        category: '',
       subcategory: '',
-      description: '',
-      address: '',
-      socialMedia: {
-        instagram: '',
-        facebook: '',
-        linkedin: ''
-      }
-    });
+        description: '',
+        address: '',
+        socialMedia: {
+          instagram: '',
+          facebook: '',
+          linkedin: ''
+        }
+      });
     setBusinesses([{
       id: 1,
       name: '',
@@ -543,17 +553,17 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
       logo: null,
       logoPreview: null
     }]);
-    setLogoFile(null);
-    setLogoPreview(null);
+      setLogoFile(null);
+      setLogoPreview(null);
     setErrors({});
     setBusinessErrors({});
     setShowCategoryDropdown(false);
     setShowSubcategoryDropdown(false);
     setActiveBusinessDropdown(null);
     setActiveBusinessSubcategoryDropdown(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
   };
 
   const ErrorMessage = ({ error }) => {
@@ -611,33 +621,33 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
               </button>
             </div>
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
             {submissionType === 'single' ? (
               /* Single Business Form */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Business Name */}
-                <div className="md:col-span-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Business Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Business Name */}
+          <div className="md:col-span-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              Business Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
                     className={`input-style ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    required
-                  />
+              required
+            />
                   <ErrorMessage error={errors.name} />
-                </div>
+          </div>
 
-                {/* Category */}
+          {/* Category */}
                 <div className="relative" ref={dropdownRef}>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                     Business Category (Optional)
-                  </label>
+            </label>
                   <button
                     type="button"
                     onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
@@ -656,11 +666,11 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
                       ref={dropdownContainerRef}
                       className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-y-auto" 
                       style={{ maxHeight: '600px' }}
-                    >
+            >
                       <div className="p-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-200">
                         💡 Tip: Press any letter (A-Z) to jump to categories starting with that letter
                       </div>
-                      {businessCategories.map(category => (
+              {businessCategories.map(category => (
                         <button
                           key={category}
                           type="button"
@@ -669,11 +679,11 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
                         >
                           {category}
                         </button>
-                      ))}
+              ))}
                     </div>
                   )}
                   <ErrorMessage error={errors.category} />
-                </div>
+          </div>
 
                 {/* Subcategory - Only show if category has subcategories */}
                 {formData.category && categorySubcategories[formData.category] && (
@@ -712,161 +722,161 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
                   </div>
                 )}
 
-                {/* Website */}
-                <div>
-                  <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Website */}
+          <div>
+            <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
                     Website URL (Optional)
-                  </label>
-                  <input
-                    type="url"
-                    id="website"
-                    name="website"
-                    value={formData.website}
-                    onChange={handleInputChange}
+            </label>
+            <input
+              type="url"
+              id="website"
+              name="website"
+              value={formData.website}
+              onChange={handleInputChange}
                     className={`input-style ${errors.website ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="https://example.com"
-                  />
+              placeholder="https://example.com"
+            />
                   <ErrorMessage error={errors.website} />
-                </div>
+          </div>
 
-                {/* Address */}
-                <div className="md:col-span-2">
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Address */}
+          <div className="md:col-span-2">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                     Full Address (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
+            </label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
                     className={`input-style ${errors.address ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
+            />
                   <ErrorMessage error={errors.address} />
-                </div>
+          </div>
 
-                {/* Phone */}
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Phone */}
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number (Optional)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
                     className={`input-style ${errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
+            />
                   <ErrorMessage error={errors.phone} />
-                </div>
+          </div>
 
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address (Optional)
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
                     className={`input-style ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
+            />
                   <ErrorMessage error={errors.email} />
-                </div>
+          </div>
 
-                {/* Description */}
-                <div className="md:col-span-2">
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Description */}
+          <div className="md:col-span-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                     Business Description (Optional)
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="input-style"
-                    placeholder="Brief description of your business and services..."
-                  />
-                </div>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={3}
+              className="input-style"
+              placeholder="Brief description of your business and services..."
+            />
+          </div>
 
-                {/* Logo Upload */}
-                <div className="md:col-span-2">
-                  <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Logo Upload */}
+          <div className="md:col-span-2">
+            <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
                     Business Logo/Image (Optional)
-                  </label>
-                  <input
-                    type="file"
-                    id="logo"
-                    name="logo"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="input-style"
-                  />
-                  {logoPreview && (
-                    <div className="mt-2">
-                      <img
-                        src={logoPreview}
-                        alt="Logo preview"
-                        className="w-20 h-20 object-cover rounded border"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Social Media Links */}
-                <div className="md:col-span-2">
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Social Media Links (Optional)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label htmlFor="facebook" className="block text-sm font-medium text-gray-700 mb-2">
-                        Facebook URL
-                      </label>
-                      <input
-                        type="url"
-                        id="facebook"
-                        name="socialMedia.facebook"
-                        value={formData.socialMedia.facebook}
-                        onChange={handleInputChange}
-                        className="input-style"
-                        placeholder="https://facebook.com/..."
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
-                        Instagram URL
-                      </label>
-                      <input
-                        type="url"
-                        id="instagram"
-                        name="socialMedia.instagram"
-                        value={formData.socialMedia.instagram}
-                        onChange={handleInputChange}
-                        className="input-style"
-                        placeholder="https://instagram.com/..."
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 mb-2">
-                        LinkedIn URL
-                      </label>
-                      <input
-                        type="url"
-                        id="linkedin"
-                        name="socialMedia.linkedin"
-                        value={formData.socialMedia.linkedin}
-                        onChange={handleInputChange}
-                        className="input-style"
-                        placeholder="https://linkedin.com/..."
-                      />
-                    </div>
-                  </div>
-                </div>
+            </label>
+            <input
+              type="file"
+              id="logo"
+              name="logo"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="input-style"
+            />
+            {logoPreview && (
+              <div className="mt-2">
+                <img
+                  src={logoPreview}
+                  alt="Logo preview"
+                  className="w-20 h-20 object-cover rounded border"
+                />
               </div>
+            )}
+          </div>
+
+          {/* Social Media Links */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-medium text-gray-900 mb-3">Social Media Links (Optional)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="facebook" className="block text-sm font-medium text-gray-700 mb-2">
+                  Facebook URL
+                </label>
+                <input
+                  type="url"
+                  id="facebook"
+                  name="socialMedia.facebook"
+                  value={formData.socialMedia.facebook}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="https://facebook.com/..."
+                />
+              </div>
+              <div>
+                <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
+                  Instagram URL
+                </label>
+                <input
+                  type="url"
+                  id="instagram"
+                  name="socialMedia.instagram"
+                  value={formData.socialMedia.instagram}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="https://instagram.com/..."
+                />
+              </div>
+              <div>
+                <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 mb-2">
+                  LinkedIn URL
+                </label>
+                <input
+                  type="url"
+                  id="linkedin"
+                  name="socialMedia.linkedin"
+                  value={formData.socialMedia.linkedin}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="https://linkedin.com/..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
             ) : (
               /* Business Group Form */
               <div className="space-y-8">
@@ -1141,7 +1151,7 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
               </div>
             )}
 
-            {/* Submit Button */}
+        {/* Submit Button */}
             <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
               <button
                 type="button"
@@ -1150,15 +1160,15 @@ export default function BusinessSubmissionForm({ isOpen = true, onClose = () => 
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
+          <button
+            type="submit"
+            disabled={isSubmitting}
                 className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+          >
                 {isSubmitting ? 'Submitting...' : 'Submit for Review'}
-              </button>
-            </div>
-          </form>
+          </button>
+        </div>
+      </form>
         </div>
       </div>
     </div>

@@ -552,8 +552,8 @@ export default function SummerHome() {
                   style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}
                   className="rounded-lg shadow-md"
                 >
-                  Your browser does not support the video tag.
-                </video>
+              Your browser does not support the video tag.
+            </video>
               ) : (
                 <div key={video.label} className="w-full h-64 flex items-center justify-center bg-gray-200 rounded-lg shadow-md text-gray-500 text-lg">
                   Video not available.

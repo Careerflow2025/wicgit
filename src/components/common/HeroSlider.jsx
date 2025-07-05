@@ -61,14 +61,6 @@ export default function HeroSlider() {
               <div className="flex justify-center mb-1">
                 <span className="text-white text-2xl font-bold drop-shadow-lg text-center">Join WIC Academy</span>
               </div>
-              {/* WIC Academy description */}
-              <div className="flex justify-center mb-3">
-                <p className="text-white text-center text-base leading-snug max-w-xs">
-                  WIC Academy offers a nurturing environment for children, teens, and adults to learn, grow, and thrive.<br/>
-                  Our programmes combine Islamic values, academic excellence, and personal development.<br/>
-                  Join us to build strong faith, character, and community.
-                </p>
-              </div>
               {/* 4 round buttons for mobile */}
               <div className="flex flex-wrap justify-center gap-2 w-full">
                 <Link to="/contact" className="px-4 py-2 rounded-full font-bold text-sm bg-white text-primary shadow-lg hover:bg-primary hover:text-white transition-all duration-300 border-2 border-primary text-center min-w-[90px]">
